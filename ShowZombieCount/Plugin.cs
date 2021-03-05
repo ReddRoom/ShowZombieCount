@@ -27,6 +27,7 @@ namespace ShowZombieCount
             handlers = new EventHandlers();
             Plugin.Singleton = this;
             PlayerEv.ChangingRole += handlers.OnChangingRole;
+            PlayerEv.Died += handlers.OnPlayerDied;
 
             base.OnEnabled();
         }
@@ -35,6 +36,7 @@ namespace ShowZombieCount
         {
             handlers = null;
             PlayerEv.ChangingRole -= handlers.OnChangingRole;
+            PlayerEv.Died -= handlers.OnPlayerDied;
             base.OnDisabled();
         }
 
