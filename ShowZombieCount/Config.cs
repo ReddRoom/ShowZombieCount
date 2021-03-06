@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Exiled.API.Interfaces;
-
-namespace ShowZombieCount
+﻿namespace ShowZombieCount
 {
-    public class Config : IConfig
-    {
-        [Description("Whether or not this plugin is enabled.")]
-        public bool IsEnabled { get; set; } = true;
-        public string text { get; set; } = "<color=red>Zombies:</color> %zombiecount";
+    using Exiled.API.Interfaces;
 
-        [Description("Determines the position of the text on screen (-15 = Below, 0 = Middle, 32 = Top)")]
-        public int text_position { get; set; } = 15;
+    public sealed class Config : IConfig
+    {
+        public bool IsEnabled { get; set; } = true;
+        public string Text { get; set; } = "<color=red>Zombies:</color> %ZombieCount";
+        public uint VerticalOffset { get; set; } = 3;
     }
 }
