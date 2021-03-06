@@ -52,9 +52,7 @@
             for (var i = 32; i > lineNumber; i--)
                 lineBuilder.Append("\n");
 
-            var result = lineBuilder.ToString();
-            StringBuilderPool.Shared.Return(lineBuilder);
-            return result;
+            return StringBuilderPool.Shared.ToStringReturn(lineBuilder);
         }
     }
 }
