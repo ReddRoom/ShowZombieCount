@@ -16,12 +16,9 @@
         public override Version RequiredExiledVersion { get; } = new Version(2, 3, 4);
 
         private EventHandlers _handlers;
-
-        public static Plugin Singleton { get; private set; }
-
+        
         public override void OnEnabled()
         {
-            Singleton = this;
             _handlers = new EventHandlers();
             PlayerHandlers.ChangingRole += _handlers.OnChangingRole;
             ServerHandlers.WaitingForPlayers += _handlers.OnWaitingForPlayers;

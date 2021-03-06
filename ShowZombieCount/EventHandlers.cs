@@ -33,8 +33,7 @@
         {
             while (true)
             {
-                ply.ShowHint(CachedMessage.Replace("%ZombieCount", Player.Get(RoleType.Scp0492).Count().ToString()),
-                    1f);
+                ply.ShowHint(CachedMessage.Replace("%ZombieCount", Player.Get(RoleType.Scp0492).Count().ToString()), 1f);
                 yield return Timing.WaitForSeconds(1f);
             }
         }
