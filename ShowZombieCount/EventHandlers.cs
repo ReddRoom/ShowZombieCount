@@ -22,11 +22,10 @@
             if (ev.NewRole == RoleType.Scp049)
             {
                 Coroutines.Add(Timing.RunCoroutine(ZombieCountMessage(ev.Player), ev.Player.UserId));
+                return;
             }
-            else
-            {
-                Timing.KillCoroutines(ev.Player.UserId);
-            }
+
+            Timing.KillCoroutines(ev.Player.UserId);
         }
 
         private IEnumerator<float> ZombieCountMessage(Player ply)

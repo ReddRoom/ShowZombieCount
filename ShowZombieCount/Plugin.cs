@@ -13,25 +13,25 @@
         public override string Name { get; } = "ShowZombieCount";
         public override string Author { get; } = "Cwaniak U.G";
         public override Version Version { get; } = new Version(1, 0, 1);
-        public override Version RequiredExiledVersion { get; } = new Version(2, 3, 4);
+        public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
 
-        private EventHandlers _handlers;
+        private EventHandlers handlers;
         
         public override void OnEnabled()
         {
-            _handlers = new EventHandlers();
-            PlayerHandlers.ChangingRole += _handlers.OnChangingRole;
-            ServerHandlers.WaitingForPlayers += _handlers.OnWaitingForPlayers;
-            _handlers.CachedMessage = SetupMessage();
+            handlers = new EventHandlers();
+            PlayerHandlers.ChangingRole += handlers.OnChangingRole;
+            ServerHandlers.WaitingForPlayers += handlers.OnWaitingForPlayers;
+            handlers.CachedMessage = SetupMessage();
             base.OnEnabled();
         }
 
         public override void OnDisabled()
         {
-            Timing.KillCoroutines(_handlers.Coroutines.ToArray());
-            PlayerHandlers.ChangingRole -= _handlers.OnChangingRole;
-            ServerHandlers.WaitingForPlayers -= _handlers.OnWaitingForPlayers;
-            _handlers = null;
+            Timing.KillCoroutines(handlers.Coroutines.ToArray());
+            PlayerHandlers.ChangingRole -= handlers.OnChangingRole;
+            ServerHandlers.WaitingForPlayers -= handlers.OnWaitingForPlayers;
+            handlers = null;
             base.OnDisabled();
         }
 
