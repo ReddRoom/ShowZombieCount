@@ -1,4 +1,11 @@
-﻿namespace ShowZombieCount
+﻿// -----------------------------------------------------------------------
+// <copyright file="Plugin.cs" company="Build">
+// Copyright (c) Build. All rights reserved.
+// Licensed under the CC BY-SA 3.0 license.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace ShowZombieCount
 {
     using System;
     using System.Text;
@@ -8,15 +15,26 @@
     using PlayerHandlers = Exiled.Events.Handlers.Player;
     using ServerHandlers = Exiled.Events.Handlers.Server;
 
+    /// <summary>
+    /// The main plugin class.
+    /// </summary>
     public class Plugin : Plugin<Config>
     {
-        public override string Name { get; } = "ShowZombieCount";
-        public override string Author { get; } = "Cwaniak U.G";
-        public override Version Version { get; } = new Version(1, 0, 1);
-        public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
-
         private EventHandlers handlers;
-        
+
+        /// <inheritdoc />
+        public override string Name { get; } = "ShowZombieCount";
+
+        /// <inheritdoc />
+        public override string Author { get; } = "Build";
+
+        /// <inheritdoc />
+        public override Version Version { get; } = new Version(2, 0, 0);
+
+        /// <inheritdoc />
+        public override Version RequiredExiledVersion { get; } = new Version(3, 0, 5);
+
+        /// <inheritdoc />
         public override void OnEnabled()
         {
             handlers = new EventHandlers();
@@ -26,21 +44,14 @@
             base.OnEnabled();
         }
 
+        /// <inheritdoc />
         public override void OnDisabled()
         {
-            Timing.KillCoroutines(handlers.Coroutines.ToArray());
+            handlers.KillDisplays();
             PlayerHandlers.ChangingRole -= handlers.OnChangingRole;
             ServerHandlers.WaitingForPlayers -= handlers.OnWaitingForPlayers;
             handlers = null;
             base.OnDisabled();
-        }
-
-        private string SetupMessage()
-        {
-            StringBuilder stringBuilder = StringBuilderPool.Shared.Rent();
-            stringBuilder.AppendLine(Config.Text);
-            stringBuilder.AppendLine(NewLineFormatter(Config.VerticalOffset));
-            return StringBuilderPool.Shared.ToStringReturn(stringBuilder);
         }
 
         private static string NewLineFormatter(uint lineNumber)
@@ -50,6 +61,14 @@
                 lineBuilder.Append("\n");
 
             return StringBuilderPool.Shared.ToStringReturn(lineBuilder);
+        }
+
+        private string SetupMessage()
+        {
+            StringBuilder stringBuilder = StringBuilderPool.Shared.Rent();
+            stringBuilder.AppendLine(Config.Text);
+            stringBuilder.AppendLine(NewLineFormatter(Config.VerticalOffset));
+            return StringBuilderPool.Shared.ToStringReturn(stringBuilder);
         }
     }
 }
