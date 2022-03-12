@@ -19,11 +19,13 @@ namespace ShowZombieCount
     public class EventHandlers
     {
         private readonly List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
+        private readonly Plugin plugin;
 
         /// <summary>
-        /// Gets or sets the base message to display to Scp049 instances.
+        /// Initializes a new instance of the <see cref="EventHandlers"/> class.
         /// </summary>
-        public string CachedMessage { get; set; } = string.Empty;
+        /// <param name="plugin">An instance of the <see cref="Plugin"/> class.</param>
+        public EventHandlers(Plugin plugin) => this.plugin = plugin;
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
         public void OnWaitingForPlayers()
@@ -34,9 +36,9 @@ namespace ShowZombieCount
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            Timing.KillCoroutines(ev.Player.UserId);
+            Timing.KillCoroutines($"SZC#{ev.Player.UserId}");
             if (ev.NewRole == RoleType.Scp049)
-                coroutines.Add(Timing.RunCoroutine(ZombieCountMessage(ev.Player), ev.Player.UserId));
+                coroutines.Add(Timing.RunCoroutine(ZombieCountMessage(ev.Player), $"SZC#{ev.Player.UserId}"));
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace ShowZombieCount
         {
             while (true)
             {
-                ply.ShowHint(CachedMessage.Replace("%ZombieCount", Player.Get(RoleType.Scp0492).Count().ToString()), 1f);
+                ply.ShowHint(plugin.Config.ConfiguredText.Replace("%ZombieCount", Player.Get(RoleType.Scp0492).Count().ToString()), 1f);
                 yield return Timing.WaitForSeconds(1f);
             }
         }

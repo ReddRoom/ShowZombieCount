@@ -7,11 +7,31 @@
 
 namespace ShowZombieCount
 {
+    using System.Text;
     using Exiled.API.Interfaces;
+    using NorthwoodLib.Pools;
+    using YamlDotNet.Serialization;
 
     /// <inheritdoc />
     public sealed class Config : IConfig
     {
+        private string configuredText;
+
+        /// <summary>
+        /// Gets the configured message.
+        /// </summary>
+        [YamlIgnore]
+        public string ConfiguredText
+        {
+            get
+            {
+                if (configuredText == null)
+                    configuredText = SetupMessage();
+
+                return configuredText;
+            }
+        }
+
         /// <inheritdoc />
         public bool IsEnabled { get; set; } = true;
 
@@ -24,5 +44,25 @@ namespace ShowZombieCount
         /// Gets or sets the vertical position to display the text.
         /// </summary>
         public uint VerticalOffset { get; set; } = 3;
+
+        /// <inheritdoc cref="Exiled.Events.Handlers.Server.ReloadedConfigs"/>
+        public void OnReloadedConfigs() => configuredText = null;
+
+        private static string NewLineFormatter(uint lineNumber)
+        {
+            StringBuilder lineBuilder = StringBuilderPool.Shared.Rent();
+            for (var i = 32; i > lineNumber; i--)
+                lineBuilder.Append("\n");
+
+            return StringBuilderPool.Shared.ToStringReturn(lineBuilder);
+        }
+
+        private string SetupMessage()
+        {
+            StringBuilder stringBuilder = StringBuilderPool.Shared.Rent();
+            stringBuilder.AppendLine(Text);
+            stringBuilder.AppendLine(NewLineFormatter(VerticalOffset));
+            return StringBuilderPool.Shared.ToStringReturn(stringBuilder);
+        }
     }
 }
