@@ -21,16 +21,7 @@ namespace ShowZombieCount
         /// Gets the configured message.
         /// </summary>
         [YamlIgnore]
-        public string ConfiguredText
-        {
-            get
-            {
-                if (configuredText == null)
-                    configuredText = SetupMessage();
-
-                return configuredText;
-            }
-        }
+        public string ConfiguredText => configuredText ?? (configuredText = SetupMessage());
 
         /// <inheritdoc />
         public bool IsEnabled { get; set; } = true;
