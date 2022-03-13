@@ -26,7 +26,7 @@ namespace ShowZombieCount
         public override string Author => "Build";
 
         /// <inheritdoc />
-        public override Version Version { get; } = new Version(2, 0, 1);
+        public override Version Version { get; } = new Version(2, 0, 2);
 
         /// <inheritdoc />
         public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
