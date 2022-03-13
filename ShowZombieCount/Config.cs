@@ -37,7 +37,7 @@ namespace ShowZombieCount
         public uint VerticalOffset { get; set; } = 3;
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.ReloadedConfigs"/>
-        public void OnReloadedConfigs() => configuredText = null;
+        public void OnReloadedConfigs() => configuredText = SetupMessage();
 
         private static string NewLineFormatter(uint lineNumber)
         {
