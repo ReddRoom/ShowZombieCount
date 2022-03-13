@@ -15,13 +15,11 @@ namespace ShowZombieCount
     /// <inheritdoc />
     public sealed class Config : IConfig
     {
-        private string configuredText;
-
         /// <summary>
         /// Gets the configured message.
         /// </summary>
         [YamlIgnore]
-        public string ConfiguredText => configuredText ?? (configuredText = SetupMessage());
+        public string ConfiguredText { get; private set; }
 
         /// <inheritdoc />
         public bool IsEnabled { get; set; } = true;
@@ -37,7 +35,7 @@ namespace ShowZombieCount
         public uint VerticalOffset { get; set; } = 3;
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.ReloadedConfigs"/>
-        public void OnReloadedConfigs() => configuredText = SetupMessage();
+        public void OnReloadedConfigs() => ConfiguredText = SetupMessage();
 
         private static string NewLineFormatter(uint lineNumber)
         {

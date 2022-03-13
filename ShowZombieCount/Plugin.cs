@@ -17,7 +17,7 @@ namespace ShowZombieCount
     /// </summary>
     public class Plugin : Plugin<Config>
     {
-        private EventHandlers handlers;
+        private EventHandlers eventHandlers;
 
         /// <inheritdoc />
         public override string Name => "ShowZombieCount";
@@ -34,9 +34,11 @@ namespace ShowZombieCount
         /// <inheritdoc />
         public override void OnEnabled()
         {
-            handlers = new EventHandlers(this);
-            PlayerHandlers.ChangingRole += handlers.OnChangingRole;
-            ServerHandlers.WaitingForPlayers += handlers.OnWaitingForPlayers;
+            Config.OnReloadedConfigs();
+
+            eventHandlers = new EventHandlers(this);
+            PlayerHandlers.ChangingRole += eventHandlers.OnChangingRole;
+            ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
 
             ServerHandlers.ReloadedConfigs += Config.OnReloadedConfigs;
             base.OnEnabled();
@@ -47,10 +49,10 @@ namespace ShowZombieCount
         {
             ServerHandlers.ReloadedConfigs -= Config.OnReloadedConfigs;
 
-            handlers.KillDisplays();
-            PlayerHandlers.ChangingRole -= handlers.OnChangingRole;
-            ServerHandlers.WaitingForPlayers -= handlers.OnWaitingForPlayers;
-            handlers = null;
+            eventHandlers.KillDisplays();
+            PlayerHandlers.ChangingRole -= eventHandlers.OnChangingRole;
+            ServerHandlers.WaitingForPlayers -= eventHandlers.OnWaitingForPlayers;
+            eventHandlers = null;
 
             base.OnDisabled();
         }
