@@ -18,7 +18,7 @@ namespace ShowZombieCount
     /// </summary>
     public class EventHandlers
     {
-        private readonly List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
+        private readonly Dictionary<int, CoroutineHandle> coroutines = new();
         private readonly Plugin plugin;
 
         /// <summary>
@@ -28,17 +28,22 @@ namespace ShowZombieCount
         public EventHandlers(Plugin plugin) => this.plugin = plugin;
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
-        public void OnWaitingForPlayers()
-        {
-            KillDisplays();
-        }
+        public void OnWaitingForPlayers() => KillDisplays();
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            Timing.KillCoroutines($"SZC#{ev.Player.UserId}");
-            if (ev.NewRole == RoleType.Scp049)
-                coroutines.Add(Timing.RunCoroutine(ZombieCountMessage(ev.Player), $"SZC#{ev.Player.UserId}"));
+            if (coroutines.TryGetValue(ev.Player.Id, out CoroutineHandle coroutine))
+            {
+                Timing.KillCoroutines(coroutine);
+                coroutines.Remove(ev.Player.Id);
+            }
+        }
+
+        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnSpawned(ReferenceHub)"/>
+        public void OnSpawned(SpawnedEventArgs ev)
+        {
+            Timing.CallDelayed(plugin.Config.Delay, () => StartCoroutine(ev.Player));
         }
 
         /// <summary>
@@ -46,17 +51,23 @@ namespace ShowZombieCount
         /// </summary>
         public void KillDisplays()
         {
-            foreach (CoroutineHandle coroutine in coroutines)
+            foreach (CoroutineHandle coroutine in coroutines.Values)
                 Timing.KillCoroutines(coroutine);
 
             coroutines.Clear();
         }
 
-        private IEnumerator<float> ZombieCountMessage(Player ply)
+        private void StartCoroutine(Player player)
+        {
+            if (player.Role.Type == RoleType.Scp049 && !coroutines.ContainsKey(player.Id))
+                coroutines.Add(player.Id, Timing.RunCoroutine(ZombieCountMessage(player)));
+        }
+
+        private IEnumerator<float> ZombieCountMessage(Player player)
         {
             while (true)
             {
-                ply.ShowHint(plugin.Config.ConfiguredText.Replace("%ZombieCount", Player.Get(RoleType.Scp0492).Count().ToString()), 1f);
+                player.ShowHint(string.Format(plugin.Config.GetConfiguredText(), Player.Get(RoleType.Scp0492).Count().ToString()), 1f);
                 yield return Timing.WaitForSeconds(1f);
             }
         }

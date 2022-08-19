@@ -7,19 +7,20 @@
 
 namespace ShowZombieCount
 {
+    using System.ComponentModel;
     using System.Text;
     using Exiled.API.Interfaces;
     using NorthwoodLib.Pools;
-    using YamlDotNet.Serialization;
 
     /// <inheritdoc />
     public sealed class Config : IConfig
     {
+        private readonly string configuredText;
+
         /// <summary>
-        /// Gets the configured message.
+        /// Initializes a new instance of the <see cref="Config"/> class.
         /// </summary>
-        [YamlIgnore]
-        public string ConfiguredText { get; private set; }
+        public Config() => configuredText = SetupMessage();
 
         /// <inheritdoc />
         public bool IsEnabled { get; set; } = true;
@@ -27,21 +28,32 @@ namespace ShowZombieCount
         /// <summary>
         /// Gets or sets the message to show to all Scp049 instances.
         /// </summary>
-        public string Text { get; set; } = "<color=red>Zombies:</color> %ZombieCount";
+        [Description("The message to show to all Scp049 instances.")]
+        public string Text { get; set; } = "<color=red>Zombies:</color> {0}";
 
         /// <summary>
         /// Gets or sets the vertical position to display the text.
         /// </summary>
+        [Description("The vertical position to display the text.")]
         public uint VerticalOffset { get; set; } = 3;
 
-        /// <inheritdoc cref="Exiled.Events.Handlers.Server.ReloadedConfigs"/>
-        public void OnReloadedConfigs() => ConfiguredText = SetupMessage();
+        /// <summary>
+        /// Gets or sets the amount of time, in seconds, before showing the hint for the first time.
+        /// </summary>
+        [Description("The amount of time, in seconds, before showing the hint for the first time.")]
+        public float Delay { get; set; } = 0f;
+
+        /// <summary>
+        /// Gets the configured message to show to all Scp049 instances.
+        /// </summary>
+        /// <returns>The prebuilt configured message.</returns>
+        public string GetConfiguredText() => configuredText;
 
         private static string NewLineFormatter(uint lineNumber)
         {
             StringBuilder lineBuilder = StringBuilderPool.Shared.Rent();
-            for (var i = 32; i > lineNumber; i--)
-                lineBuilder.Append("\n");
+            for (int i = 32; i > lineNumber; i--)
+                lineBuilder.AppendLine();
 
             return StringBuilderPool.Shared.ToStringReturn(lineBuilder);
         }

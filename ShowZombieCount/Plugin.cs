@@ -20,40 +20,38 @@ namespace ShowZombieCount
         private EventHandlers eventHandlers;
 
         /// <inheritdoc />
-        public override string Name => "ShowZombieCount";
-
-        /// <inheritdoc />
         public override string Author => "Build";
 
         /// <inheritdoc />
-        public override Version Version { get; } = new Version(2, 0, 2);
+        public override string Name => "ShowZombieCount";
 
         /// <inheritdoc />
-        public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
+        public override string Prefix => "ShowZombieCount";
+
+        /// <inheritdoc />
+        public override Version RequiredExiledVersion { get; } = new(5, 2, 2);
+
+        /// <inheritdoc />
+        public override Version Version { get; } = new(2, 0, 3);
 
         /// <inheritdoc />
         public override void OnEnabled()
         {
-            Config.OnReloadedConfigs();
-
             eventHandlers = new EventHandlers(this);
             PlayerHandlers.ChangingRole += eventHandlers.OnChangingRole;
+            PlayerHandlers.Spawned += eventHandlers.OnSpawned;
             ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
-
-            ServerHandlers.ReloadedConfigs += Config.OnReloadedConfigs;
             base.OnEnabled();
         }
 
         /// <inheritdoc />
         public override void OnDisabled()
         {
-            ServerHandlers.ReloadedConfigs -= Config.OnReloadedConfigs;
-
             eventHandlers.KillDisplays();
             PlayerHandlers.ChangingRole -= eventHandlers.OnChangingRole;
+            PlayerHandlers.Spawned -= eventHandlers.OnSpawned;
             ServerHandlers.WaitingForPlayers -= eventHandlers.OnWaitingForPlayers;
             eventHandlers = null;
-
             base.OnDisabled();
         }
     }
