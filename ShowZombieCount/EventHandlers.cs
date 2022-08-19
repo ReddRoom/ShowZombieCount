@@ -43,7 +43,11 @@ namespace ShowZombieCount
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnSpawned(ReferenceHub)"/>
         public void OnSpawned(SpawnedEventArgs ev)
         {
-            Timing.CallDelayed(plugin.Config.Delay, () => StartCoroutine(ev.Player));
+            Timing.CallDelayed(plugin.Config.Delay, () =>
+            {
+                if (ev.Player.Role.Type == RoleType.Scp049 && !coroutines.ContainsKey(ev.Player.Id))
+                    coroutines.Add(ev.Player.Id, Timing.RunCoroutine(ZombieCountMessage(ev.Player)));
+            });
         }
 
         /// <summary>
@@ -55,12 +59,6 @@ namespace ShowZombieCount
                 Timing.KillCoroutines(coroutine);
 
             coroutines.Clear();
-        }
-
-        private void StartCoroutine(Player player)
-        {
-            if (player.Role.Type == RoleType.Scp049 && !coroutines.ContainsKey(player.Id))
-                coroutines.Add(player.Id, Timing.RunCoroutine(ZombieCountMessage(player)));
         }
 
         private IEnumerator<float> ZombieCountMessage(Player player)
